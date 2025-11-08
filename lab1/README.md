@@ -7,6 +7,7 @@
 <img width="1128" height="503" alt="image" src="https://github.com/user-attachments/assets/fa69e69c-af79-4f65-8fae-d2bbf7df77f8" />
                                 Рисунок 1 - Отриманий результат запиту
 
+
   - Task 2: Отримання курсу валют із сайту НБУ за попередній тиждень з використанням python-бібліотеки requests
 
     

@@ -1,1 +1,39 @@
+#Команда для завантаження біблотеки#
+pip install requests
 
+#Скрипт для отримання курсу валюти з збереженням отриманих даних#
+import requests
+import csv
+import os
+
+def get_exchange_rates(currency_code="CZK", start_date="20251101", end_date="20251107"):
+    url = (
+        f"https://bank.gov.ua/NBU_Exchange/exchange_site?"
+        f"start={start_date}&"
+        f"end={end_date}&"
+        f"valcode={currency_code}&"
+        f"sort=exchangedate&order=asc&json"
+    )
+
+    response = requests.get(url)
+    response.raise_for_status()
+    data = response.json()
+    return data
+
+def save_to_csv(data, filename="czk_exchange_rates.csv"):
+    with open(filename, mode="w", newline="", encoding="utf-8") as file:
+        writer = csv.writer(file)
+        writer.writerow(["Date", "Rate (UAH)"]) #Дата, Курс (грн)
+        for item in data:
+            writer.writerow([item["exchangedate"], item["rate"]])
+    print(f"\033[92m✔️ Дані збережено у файлі: {os.path.abspath(filename)}\033[0m") #Підтвердження збереження даних в файл
+
+if name == "main":
+    print("\033[96m=== Курс чеської крони (CZK) з 01.11 по 07.11 ===\033[0m") 
+
+    rates = get_exchange_rates("CZK", "20251101", "20251107")
+
+    for item in rates:
+        print(f"\033[93m{item['exchangedate']}\033[0m — {item['rate']} UAH")
+
+    save_to_csv(rates)

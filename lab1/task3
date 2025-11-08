@@ -1,7 +1,9 @@
 #Завантаження необхідної бібілотеки#
+
 pip install matplotlib 
 --------------------------------------------
 #Скрипт побудови графіку#
+
 import matplotlib.pyplot as plt
 import csv
 

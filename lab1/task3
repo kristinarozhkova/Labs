@@ -1,1 +1,23 @@
+#Завантаження необхідної бібілотеки#
+pip install matplotlib 
+--------------------------------------------
+#Скрипт побудови графіку#
+import matplotlib.pyplot as plt
+import csv
 
+# Читання даних з CSV
+dates = []
+rates = []
+with open('czk_exchange_rates.csv', 'r') as file:
+    reader = csv.DictReader(file)
+    for row in reader:
+        dates.append(row["Date"])
+        rates.append(float(row["Rate (UAH)"]))
+
+# Побудова графіка через matplotlib
+plt.plot(dates, rates, marker='o', color='blue')
+plt.title("Зміна курсу CZK")
+plt.xlabel("Дата")
+plt.ylabel("Курс (UAH)")
+plt.grid(True)
+plt.show()

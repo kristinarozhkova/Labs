@@ -27,11 +27,12 @@
 
   Для виконананя поставленого завдання було відкрито офіційний сайт "https://my.telegram.org/auth" та отримано власні значення api_id та api_hash, які будуть використані при подальшому створені коду. Крім того, в створеному скрипті було використано посилання на чат, який містить 3 користувачів, та додано функцію, яка надішле повідомлення в цей чат. Запустивши розроблений скрипт, було отримано список користувачів (рис. 4).
 
-  <img width="358" height="122" alt="image" src="https://github.com/user-attachments/assets/4c501116-df51-4301-8624-0cc0221d4653" />
+<p align="center"><img width="358" height="122" alt="image" src="https://github.com/user-attachments/assets/4c501116-df51-4301-8624-0cc0221d4653" />
 <p align="center">Рисунок 3 - Виведений список користувачів
 
 На рисунку 4 представлено відправлене повідомлення в цей чат.
-<img width="537" height="83" alt="image" src="https://github.com/user-attachments/assets/962747d0-f854-4d5b-a2dc-f34a53cdcc8f" />
+
+<p align="center"><img width="537" height="83" alt="image" src="https://github.com/user-attachments/assets/962747d0-f854-4d5b-a2dc-f34a53cdcc8f" />
 <p align="center">Рисунок 4 - Відправлене повідомлення за допмогою скрипту
 
   - Task 5: Створення бота, що підтримує команди menu, whisper, scream

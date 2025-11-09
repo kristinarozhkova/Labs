@@ -1,1 +1,32 @@
+# Встановлення бібліотеки #
+ pip install telethon
+----------------------------
+# Код #
+from telethon import TelegramClient
+import asyncio
 
+api_id = ******  # власне значення api_id
+api_hash = '*****'  # власне значення api_hash
+phone_number = '+380XXXXXXXXX'  # власний номер телефону
+
+client = TelegramClient('session_name', api_id, api_hash)
+
+async def main():
+
+    await client.start(phone=phone_number)
+
+    # Список користувачів з чату/пабліку
+    chat_link = 'https://t.me/****'  # посилання на чат
+    chat = await client.get_entity(chat_link)
+    participants = await client.get_participants(chat)
+
+    print("Учасники чату:")
+    for user in participants:
+        username = f"(@{user.username})" if user.username else ""
+        print(f"- {user.first_name} {user.last_name or ''} {username}")
+
+    # Відправлення повідомлення в обраний чат
+    await client.send_message(chat, "Привіт, це я!")
+
+with client:
+    client.loop.run_until_complete(main())

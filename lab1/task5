@@ -1,1 +1,48 @@
+# Попередне завантаження необзідного інструменнту #
+pip install  python-telegram-bot
+---------------------------------------------------
+# Скрипт боту #
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
+BOT_TOKEN = '****'  # Значення отриманого токену бота
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Привіт! Я бот. Використай /menu, /whisper або /scream")
+
+async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    text = (
+        "📜 Меню команд:\n"
+        "/menu — показати це меню\n"
+        "/whisper <текст> — написати тихо (lowercase)\n"
+        "/scream <текст> — крикнути (UPPERCASE)"
+    )
+    await update.message.reply_text(text)
+
+# /whisper
+async def whisper(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if context.args:
+        text = ' '.join(context.args).lower()
+        await update.message.reply_text(text)
+    else:
+        await update.message.reply_text("❌ Введіть текст після команди, наприклад: /whisper Привіт")
+
+# /scream
+async def scream(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if context.args:
+        text = ' '.join(context.args).upper()
+        await update.message.reply_text(text)
+    else:
+        await update.message.reply_text("❌ Введіть текст після команди, наприклад: /scream Привіт")
+
+
+if name == 'main':
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
+
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("menu", menu))
+    app.add_handler(CommandHandler("whisper", whisper))
+    app.add_handler(CommandHandler("scream", scream))
+
+    print("Бот запущено...")
+    app.run_polling()

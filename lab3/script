@@ -1,1 +1,126 @@
+# Встановлення бібліотек #
+pip install flask
+pip install flask_restful
+pip install flask_httpauth
+---------------------------------------
+
+from flask import Flask, request
+from flask_restful import Resource, Api
+from flask_httpauth import HTTPBasicAuth
+import json
+import os
+
+app = Flask(__name__)
+api = Api(app)
+auth = HTTPBasicAuth()
+
+# --- Реалізація зберігання даних в файлах ---
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+USERS_FILE = os.path.join(BASE_DIR, "users.txt")
+ITEMS_FILE = os.path.join(BASE_DIR, "items.json")
+
+
+# --- Автенитфікація ---
+def load_users(file_path=USERS_FILE):
+    users = {}
+    if os.path.exists(file_path):
+        with open(file_path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line and ":" in line:
+                    username, password = line.split(":", 1)
+                    users[username] = password
+    return users
+
+
+@auth.verify_password
+def verify(username, password):
+    users = load_users()
+    if username in users and users[username] == password:
+        return username
+
+
+
+def load_items():
+    if not os.path.exists(ITEMS_FILE):
+        return []
+    with open(ITEMS_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def save_items(items):
+    with open(ITEMS_FILE, "w", encoding="utf-8") as f:
+        json.dump(items, f, indent=4, ensure_ascii=False)
+
+
+# ---  1 endpoint - /items, реалізація підтримки GET та POST---
+class ItemList(Resource):
+    @auth.login_required
+    def get(self):
+        return load_items(), 200
+
+    @auth.login_required
+    def post(self):
+        data = request.get_json()
+
+        if not data or "name" not in data or "price" not in data:
+            return {"message": "Missing name or price"}, 400
+
+        items = load_items()
+        new_id = max([item["id"] for item in items], default=0) + 1
+
+        item = {
+            "id": new_id,
+            "name": data["name"],
+            "price": data["price"]
+        }
+
+        items.append(item)
+        save_items(items)
+
+        return item, 201
+
+
+# --- 2 endpoint - /items/<id>, реалізація підтримки GET, PUT, DELETE ---
+class Item(Resource):
+    @auth.login_required
+    def get(self, item_id):
+        items = load_items()
+        for item in items:
+            if item["id"] == item_id:
+                return item, 200
+        return {"message": "Item not found"}, 404
+
+    @auth.login_required
+    def put(self, item_id):
+        data = request.get_json()
+        items = load_items()
+
+        for item in items:
+            if item["id"] == item_id:
+                item.update(data)
+                save_items(items)
+                return item, 200
+
+        return {"message": "Item not found"}, 404
+
+    @auth.login_required
+    def delete(self, item_id):
+        items = load_items()
+        for i, item in enumerate(items):
+            if item["id"] == item_id:
+                deleted = items.pop(i)
+                save_items(items)
+                return deleted, 200
+
+        return {"message": "Item not found"}, 404
+
+api.add_resource(ItemList, '/items')
+api.add_resource(Item, '/items/<int:item_id>')
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+
 

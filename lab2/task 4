@@ -1,1 +1,18 @@
+from flask import Flask, request, jsonify, Response
 
+app = Flask(__name__)
+
+@app.route("/data")
+def data():
+    content_type = request.headers.get("Content-Type")
+
+    if content_type == "application/json":
+        return jsonify({"message": "Hello World!"})
+    elif content_type == "application/xml":
+        xml_data = """<?xml version="1.0" encoding="UTF-8"?><message>Hello World!</message>"""
+        return Response(xml_data, mimetype="application/xml")
+    else:
+        return "Hello World!"
+
+if __name__ == "__main__":
+    app.run(port=8000)

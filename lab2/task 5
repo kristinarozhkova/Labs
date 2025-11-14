@@ -1,1 +1,35 @@
+from flask import Flask, request
+import requests
+from datetime import datetime, timedelta
+
+app = Flask(__name__)
+
+@app.route("/currency")
+def currency_dynamic():
+    param = request.args.keys()
+    if "today" in param:
+        date_str = ""
+    elif "yesterday" in param:
+        yesterday = datetime.now() - timedelta(days=1)
+        date_str = yesterday.strftime("%Y%m%d")
+    else:
+        return "Invalid parameter", 400
+
+    url = f"https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json"
+    if date_str:
+        url += f"&date={date_str}"
+
+    response = requests.get(url)
+    if response.status_code != 200:
+        return "Failed to fetch data from NBU", 500
+
+    data = response.json()
+    czk_rate = next((item["rate"] for item in data if item["cc"] == "CZK"), None)
+    if czk_rate is None:
+        return "CZK rate not found", 404
+
+    return f"CZK - {czk_rate}"
+
+if __name__ == "__main__":
+    app.run(port=8000)
 
